@@ -3,8 +3,9 @@ import pyowm
 import time
 from datetime import datetime
 from w1thermsensor import W1ThermSensor
+import plotly
+import plotly.graph_objs as go
 import pandas as pd
-
 # my API code
 owm = pyowm.OWM('29186bf4c93a1c8c48837b56de4749e7')
 sensor = W1ThermSensor()
@@ -29,6 +30,28 @@ def loop(ds18b20):
             print(datetime.now().strftime('%Y-%m-%d %H:%M') + ',' + str(outsideTemp['temp_max']) + ' F,' + str(
                 format(fahrenheitTemp, '.2f')) + ' F')
             tempLog.close()
+
+            df = pd.read_csv('templog.txt')
+            weatherTrace = go.Scatter(
+                x=df['time'],
+                y=df['weather'],
+                mode='lines',
+                name='Weather'
+            )
+
+            probeTrace = go.Scatter(
+                x=df['time'],
+                y=df['probe'],
+                mode='lines',
+                name='Probe'
+            )
+            data = [weatherTrace, probeTrace]
+
+            plotly.offline.plot({
+                "data": data,
+                "layout": go.Layout(title="Hydro")
+            }, auto_open=False)
+
             time.sleep(1800)
 
 def kill():
