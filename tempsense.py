@@ -4,34 +4,20 @@ import pyowm
 import time
 from datetime import datetime
 
-owm = pyowm.OWM('29186bf4c93a1c8c48837b56de4749e7')
+from w1thermsensor import W1ThermSensor
 
-
-def sensor():
-    for i in os.listdir('/sys/bus/w1/devices'):
-        if i != 'w1_bus_master1':
-            ds18b20 = i
-    return ds18b20
-
-
-def read(ds18b20):
-    location = '/sys/bus/w1/devices/' + ds18b20 + '/w1_slave'
-    tfile = open(location)
-    text = tfile.read()
-    tfile.close()
-    secondline = text.split("\n")[1]
-    temperaturedata = secondline.split(" ")[9]
-    temperature = float(temperaturedata[2:])
-    celsius = temperature / 1000
-    farenheit = (celsius * 1.8) + 32
-    return celsius, farenheit
+sensor = W1ThermSensor()
+temperature_in_fahrenheit = sensor.get_temperature(W1ThermSensor.DEGREES_F)
+print(temperature_in_fahrenheit)
 
 
 def loop(ds18b20):
     while True:
         if read(ds18b20) != None:
             tempLog = open('/home/pi/templog.txt', 'a')
-            fahrenheitTemp = read(ds18b20)
+            fahrenheitTemp = sensor.get_temperature(W1ThermSensor.DEGREES_F)
+
+            # fahrenheitTemp = read(ds18b20)
             # this city ID is for Concord, CA (USA) - concord, ca will give Canada
             observation = owm.weather_at_id(5339111)
             w = observation.get_weather()
@@ -40,10 +26,11 @@ def loop(ds18b20):
             # make into a csv file so can eventually graph it.  format: time,weather temp, probe temp
             tempLog.write(datetime.now().strftime('%Y-%m-%d %H:%M') + ',')
             tempLog.write(str(outsideTemp['temp_max']) + ' F,')
-            tempLog.write(str(format(fahrenheitTemp[1], '.2f')) + ' F\n')
+            tempLog.write(str(fahrenheitTemp) + '\n')
+            #tempLog.write(str(format(fahrenheitTemp[1], '.2f')) + ' F\n')
             print("time, weather temp, probe temp")
             print(datetime.now().strftime('%Y-%m-%d %H:%M') + ',' + str(outsideTemp['temp_max']) + ' F,' + str(
-                format(fahrenheitTemp[1], '.2f')) + ' F')
+                fahrenheitTemp) + ' F')
             tempLog.close()
             time.sleep(1800)
 
