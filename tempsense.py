@@ -3,6 +3,8 @@ import pyowm
 import time
 from datetime import datetime
 from w1thermsensor import W1ThermSensor
+import pandas as pd
+
 
 # my API code
 owm = pyowm.OWM('29186bf4c93a1c8c48837b56de4749e7')
