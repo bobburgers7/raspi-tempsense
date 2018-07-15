@@ -5,7 +5,6 @@ from datetime import datetime
 from w1thermsensor import W1ThermSensor
 import pandas as pd
 
-
 # my API code
 owm = pyowm.OWM('29186bf4c93a1c8c48837b56de4749e7')
 sensor = W1ThermSensor()
@@ -23,8 +22,8 @@ def loop(ds18b20):
 
             # make into a csv file so can eventually graph it.  format: time,weather temp, probe temp
             tempLog.write(datetime.now().strftime('%Y-%m-%d %H:%M') + ',')
-            tempLog.write(str(outsideTemp['temp_max']) + ' F,')
-            tempLog.write(str(format(fahrenheitTemp, '.2f')) + ' F\n')
+            tempLog.write(str(outsideTemp['temp_max']) + ',')
+            tempLog.write(str(format(fahrenheitTemp, '.2f')) + '\n')
             #tempLog.write(str(format(fahrenheitTemp[1], '.2f')) + ' F\n')
             print("time, weather temp, probe temp")
             print(datetime.now().strftime('%Y-%m-%d %H:%M') + ',' + str(outsideTemp['temp_max']) + ' F,' + str(
