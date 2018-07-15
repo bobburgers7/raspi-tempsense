@@ -6,9 +6,12 @@ from w1thermsensor import W1ThermSensor
 import plotly
 import plotly.graph_objs as go
 import pandas as pd
+
 # my API code
 owm = pyowm.OWM('29186bf4c93a1c8c48837b56de4749e7')
 sensor = W1ThermSensor()
+plotly.tools.set_credentials_file(username='daw007', api_key='FzbP6kHpdwPM4DLJsOjQ')
+
 
 def loop(ds18b20):
     while True:
@@ -47,10 +50,11 @@ def loop(ds18b20):
             )
             data = [weatherTrace, probeTrace]
 
-            plotly.offline.plot({
-                "data": data,
-                "layout": go.Layout(title="Hydro")
-            }, auto_open=False)
+            # plotly.offline.plot({
+            #     "data": data,
+            #     "layout": go.Layout(title="Hydro")
+            # }, auto_open=False)
+            plotly.plotly.plot(data, filename='basic-line', auto_open=True)
 
             time.sleep(1800)
 
