@@ -16,14 +16,15 @@ plotly.tools.set_credentials_file(username='daw007', api_key='FzbP6kHpdwPM4DLJsO
 def loop(ds18b20):
     while True:
         if ds18b20 != None:
-            tempLog = open('/home/pi/templog.txt', 'a')
+            tempLog = open('templog.txt', 'a')
             fahrenheitTemp = sensor.get_temperature(W1ThermSensor.DEGREES_F)
-
+            # fahrenheitTemp = 20
             # this city ID is for Concord, CA (USA) - concord, ca will give Canada
             observation = owm.weather_at_id(5339111)
             w = observation.get_weather()
             outsideTemp = w.get_temperature('fahrenheit')
-
+            # outsideTemp = 30
+            #outsideTemp['temp_max'] = 30
             # make into a csv file so can eventually graph it.  format: time,weather temp, probe temp
             tempLog.write(datetime.now().strftime('%Y-%m-%d %H:%M') + ',')
             tempLog.write(str(outsideTemp['temp_max']) + ',')
@@ -54,7 +55,7 @@ def loop(ds18b20):
             #     "data": data,
             #     "layout": go.Layout(title="Hydro")
             # }, auto_open=False)
-            plotly.plotly.plot(data, filename='basic-line', auto_open=True)
+            plotly.plotly.plot(data, filename='temp-line', auto_open=False, fileopt='overwrite')
 
             time.sleep(1800)
 
@@ -64,6 +65,7 @@ def kill():
 if __name__ == '__main__':
     try:
         serialNum = sensor
+        # serialNum = 1
         loop(serialNum)
     except KeyboardInterrupt:
         kill()
