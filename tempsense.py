@@ -8,9 +8,9 @@ import plotly.graph_objs as go
 import pandas as pd
 
 # my API code
-owm = pyowm.OWM('29186bf4c93a1c8c48837b56de4749e7')
+owm = pyowm.OWM('yourOWMAPI')
 sensor = W1ThermSensor()
-plotly.tools.set_credentials_file(username='daw007', api_key='FzbP6kHpdwPM4DLJsOjQ')
+plotly.tools.set_credentials_file(username='yourUSERNAME', api_key='yourAPIKEY')
 
 
 def loop(ds18b20):
@@ -18,9 +18,7 @@ def loop(ds18b20):
         if ds18b20 != None:
             tempLog = open('templog.txt', 'a')
             fahrenheitTemp = sensor.get_temperature(W1ThermSensor.DEGREES_F)
-            # fahrenheitTemp = 20
-            # this city ID is for Concord, CA (USA) - concord, ca will give Canada
-            observation = owm.weather_at_id(5339111)
+            observation = owm.weather_at_id(yourcityID)
             w = observation.get_weather()
             outsideTemp = w.get_temperature('fahrenheit')
             # outsideTemp = 30
