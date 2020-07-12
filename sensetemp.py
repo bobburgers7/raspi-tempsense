@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import pyowm
 import time
+import config
 from datetime import datetime
 from w1thermsensor import W1ThermSensor
 import plotly
@@ -8,15 +9,17 @@ import plotly.graph_objs as go
 import pandas as pd
 
 # my API code
-owm = pyowm.OWM('29186bf4c93a1c8c48837b56de4749e7')
-sensor = W1ThermSensor()
-plotly.tools.set_credentials_file(username='daw007', api_key='FzbP6kHpdwPM4DLJsOjQ')
+connect(cfg.mysql["host"], cfg.mysql["user"], cfg.mysql["password"])
 
-tempLog = open('templog.txt', 'a')
+owm = pyowm.OWM(config.keys["pyowmapikey"])
+sensor = W1ThermSensor()
+plotly.tools.set_credentials_file(username=config.keys["plotlylogin"], api_key=config.keys["plotlyapikey"])
+
+tempLog = open('orinda-upstairs-templog.txt', 'a')
 fahrenheitTemp = sensor.get_temperature(W1ThermSensor.DEGREES_F)
 
-# this city ID is for Concord, CA (USA) - concord, ca will give Canada
-observation = owm.weather_at_id(5339111)
+# this city ID is for Orinda, CA (USA)
+observation = owm.weather_at_id(5379678)
 w = observation.get_weather()
 outsideTemp = w.get_temperature('fahrenheit')
 
@@ -31,7 +34,7 @@ print(datetime.now().strftime('%Y-%m-%d %H:%M') + ',' + str(outsideTemp['temp_ma
     format(fahrenheitTemp, '.2f')) + ' F')
 tempLog.close()
 
-df = pd.read_csv('templog.txt')
+df = pd.read_csv('orinda-upstairs-templog.txt')
 weatherTrace = go.Scatter(
     x=df['time'],
     y=df['weather'],
@@ -47,8 +50,8 @@ probeTrace = go.Scatter(
 )
 data = [weatherTrace, probeTrace]
 
-# plotly.offline.plot({
-#     "data": data,
-#     "layout": go.Layout(title="Hydro")
-# }, auto_open=False)
-plotly.plotly.plot(data, filename='temp-line', auto_open=False, fileopt='overwrite')
+plotly.offline.plot({
+    "data": data,
+    "layout": go.Layout(title="Hydro")
+}, auto_open=False)
+# plotly.plotly.plot(data, filename='temp-line', auto_open=False, fileopt='overwrite')
